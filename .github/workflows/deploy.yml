@@ -27,22 +27,16 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # Strict host key checking prevents Man in the Middle (MitM) attacks (Security).
-      - name: Add VPS to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
-
       - name: Deploy via SSH and Docker Compose
         run: |
           # Ensure target directory exists on VPS
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "mkdir -p /var/www/html/bakenddelivery"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "mkdir -p /var/www/html/bakenddelivery"
           
           # Copy project files to VPS
-          rsync -avz --exclude='.git' --exclude='.github' ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/html/bakenddelivery/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude='.git' --exclude='.github' ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/html/bakenddelivery/
           
           # Execute docker-compose rebuild on the server
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "cd /var/www/html/bakenddelivery && docker-compose down && docker-compose up -d --build"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "cd /var/www/html/bakenddelivery && docker-compose down && docker-compose up -d --build"
 
       - name: Slack Notification - Success
         if: success()
