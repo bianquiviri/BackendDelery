@@ -27,6 +27,11 @@ func main() {
 		defer sqlDB.Close()
 	}
 
+	// 2.1 Run Migrations
+	if err := database.AutoMigrate(db); err != nil {
+		log.Fatalf("Fatal error during DB migration: %v", err)
+	}
+
 	// 3. Initialize HTTP Router
 	router := gin.Default()
 
