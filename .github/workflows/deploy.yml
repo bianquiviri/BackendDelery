@@ -21,13 +21,6 @@ jobs:
           SLACK_TITLE: 'Deployment Started'
           SLACK_USERNAME: 'DaaS Bot'
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-
-      - name: Run Tests (Resilience & correctness check)
-        run: go test -v ./...
 
       - name: Add SSH Key
         uses: webfactory/ssh-agent@v0.8.0

@@ -19,6 +19,9 @@ RUN go mod download
 # Copy local code to the container image.
 COPY . .
 
+# Run tests (Resilience & correctness check within the container context)
+RUN go test -v ./...
+
 # Build the binary.
 # -ldflags="-w -s" removes debugging info, reducing binary size (Performance).
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/api cmd/api/main.go
