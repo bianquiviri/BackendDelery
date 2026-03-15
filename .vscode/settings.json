@@ -1,1 +1,1 @@
-{"go.useLanguageServer": true, "go.lintTool": "golangci-lint", "go.formatTool": "gofumpt", "editor.formatOnSave": true, "go.toolsEnvVars": {"CGO_ENABLED": "0"}}
+{"go.useLanguageServer": true, "go.lintTool": "golangci-lint", "go.formatTool": "gofumpt", "editor.formatOnSave": true, "go.toolsEnvVars": {"CGO_ENABLED": "0"}, "gopls": {"ui.completion.usePlaceholders": true, "ui.semanticTokens": true, "build.buildFlags": ["-tags="], "formatting.gofumpt": true}}

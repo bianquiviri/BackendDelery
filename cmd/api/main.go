@@ -5,6 +5,9 @@ import (
 
 	"github.com/backend-delery/api/database"
 	"github.com/backend-delery/api/internal/config"
+	"github.com/backend-delery/api/internal/handler"
+	"github.com/backend-delery/api/internal/repository"
+	"github.com/backend-delery/api/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,8 +35,27 @@ func main() {
 		log.Fatalf("Fatal error during DB migration: %v", err)
 	}
 
-	// 3. Initialize HTTP Router
+	// 3. Dependency Injection (DI) Setup
+	// 3.1 Repositories
+	storeRepo := repository.NewStoreRepository(db)
+	driverRepo := repository.NewDriverRepository(db)
+	orderRepo := repository.NewOrderRepository(db)
+
+	// 3.2 Services
+	orderSvc := service.NewOrderService(orderRepo, storeRepo, driverRepo)
+
+	// 3.3 Handlers
+	orderHandler := handler.NewOrderHandler(orderSvc)
+
+	// 4. Initialize HTTP Router
 	router := gin.Default()
+
+	// 4.1 Global Middleware
+	// Recovery middleware recovers from any panics and writes a 500 if there was one. (Resilience)
+	router.Use(gin.Recovery())
+
+	// 4.2 Register Routes
+	orderHandler.RegisterRoutes(router)
 
 	// Simple health check endpoint
 	router.GET("/health", func(c *gin.Context) {
