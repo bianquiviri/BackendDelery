@@ -1,0 +1,40 @@
+name: Deploy DaaS Backend to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Run Tests (Resilience & correctness check)
+        run: go test -v ./...
+
+      - name: Add SSH Key
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Strict host key checking prevents Man in the Middle (MitM) attacks (Security).
+      - name: Add VPS to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH and Docker Compose
+        run: |
+          # Copy project files to VPS
+          rsync -avz --exclude='.git' --exclude='.github' ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }}:/var/www/daas_backend/
+          
+          # Execute docker-compose rebuild on the server
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "cd /var/www/daas_backend && docker-compose down && docker-compose up -d --build"
