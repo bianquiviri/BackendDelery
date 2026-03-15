@@ -1,0 +1,19 @@
+# Avoid copying macOS metadata files
+**/._*
+.DS_Store
+
+# Version control
+.git
+.github
+.gitignore
+
+# IDE settings
+.vscode
+
+# Environment files
+.env
+.env.example
+
+# Build artifacts
+api
+bin/

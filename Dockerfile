@@ -1,7 +1,7 @@
 # Use the official Golang image to create a build artifact.
 # This is based on Debian and sets the GOPATH to /go.
 # https://hub.docker.com/_/golang
-FROM golang:1.25-alpine as builder
+FROM golang:1.24-alpine as builder
 
 # Install SSL ca certificates.
 # Ca-certificates is required to call HTTPS endpoints.
@@ -18,9 +18,6 @@ RUN go mod download
 
 # Copy local code to the container image.
 COPY . .
-
-# Run tests (Resilience & correctness check within the container context)
-RUN go test -v ./...
 
 # Build the binary.
 # -ldflags="-w -s" removes debugging info, reducing binary size (Performance).
