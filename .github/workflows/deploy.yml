@@ -1,4 +1,4 @@
-name: Deploy DaaS Backend to VPS
+name: Deploy DaaS Backend to DigitalOcean
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_COLOR: 'warning'
-          SLACK_MESSAGE: '🚀 Deployment of DaaS Backend to VPS started...'
+          SLACK_MESSAGE: '🚀 Deployment of DaaS Backend to DigitalOcean started...'
           SLACK_TITLE: 'Deployment Started'
           SLACK_USERNAME: 'DaaS Bot'
 
@@ -29,10 +29,10 @@ jobs:
 
       - name: Deploy via SSH and Docker Compose
         run: |
-          # Ensure target directory exists on VPS
+          # Ensure target directory exists on DigitalOcean Droplet
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p /var/www/html/bakenddelivery"
           
-          # Copy project files to VPS
+          # Copy project files to DigitalOcean Droplet
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude='.git' --exclude='.github' ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/bakenddelivery/
           
           # Execute docker-compose rebuild on the server
@@ -44,7 +44,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_COLOR: 'good'
-          SLACK_MESSAGE: '✅ Deployment of DaaS Backend to VPS finished successfully!'
+          SLACK_MESSAGE: '✅ Deployment of DaaS Backend to DigitalOcean finished successfully!'
           SLACK_TITLE: 'Deployment Success'
           SLACK_USERNAME: 'DaaS Bot'
 
@@ -54,6 +54,6 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_COLOR: 'danger'
-          SLACK_MESSAGE: '❌ Deployment of DaaS Backend to VPS failed. Please check the GitHub Actions logs.'
+          SLACK_MESSAGE: '❌ Deployment of DaaS Backend to DigitalOcean failed. Please check the GitHub Actions logs.'
           SLACK_TITLE: 'Deployment Failed'
           SLACK_USERNAME: 'DaaS Bot'
