@@ -9,41 +9,19 @@ services:
     environment:
       - PORT=8084
       - GIN_MODE=release # Default for security and performance
-      - DB_HOST=db
+      # Points to the host machine where the external Postgres container is running.
+      # You may need to use host.docker.internal or the host's actual LAN IP based on your Docker setup.
+      - DB_HOST=${DB_HOST:-host.docker.internal}
       - DB_USER=${DB_USER:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-secret}
       - DB_NAME=${DB_NAME:-daas_db}
-      - DB_PORT=5432
+      - DB_PORT=${DB_PORT:-5432}
       - DB_SSLMODE=disable
-    depends_on:
-      db:
-        condition: service_healthy # Wait until Postgres is actually accepting connections
     networks:
       - daas_network
     restart: unless-stopped
 
-  db:
-    image: postgres:15-alpine
-    container_name: daas_postgres
-    environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
-      POSTGRES_DB: ${DB_NAME:-daas_db}
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - daas_network
-    restart: unless-stopped
 
-volumes:
-  pgdata:
 
 networks:
   daas_network:
