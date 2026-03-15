@@ -12,6 +12,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Slack Notification - Started
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: 'warning'
+          SLACK_MESSAGE: '🚀 Deployment of DaaS Backend to VPS started...'
+          SLACK_TITLE: 'Deployment Started'
+          SLACK_USERNAME: 'DaaS Bot'
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -38,3 +47,23 @@ jobs:
           
           # Execute docker-compose rebuild on the server
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_IP }} "cd /var/www/daas_backend && docker-compose down && docker-compose up -d --build"
+
+      - name: Slack Notification - Success
+        if: success()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: 'good'
+          SLACK_MESSAGE: '✅ Deployment of DaaS Backend to VPS finished successfully!'
+          SLACK_TITLE: 'Deployment Success'
+          SLACK_USERNAME: 'DaaS Bot'
+
+      - name: Slack Notification - Failure
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_COLOR: 'danger'
+          SLACK_MESSAGE: '❌ Deployment of DaaS Backend to VPS failed. Please check the GitHub Actions logs.'
+          SLACK_TITLE: 'Deployment Failed'
+          SLACK_USERNAME: 'DaaS Bot'
