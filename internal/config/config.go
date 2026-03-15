@@ -32,7 +32,7 @@ func LoadConfig() *Config {
 		DBName:     getEnv("DB_NAME", "daas_db"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
-		Port:       getEnv("PORT", "8080"),
+		Port:       getEnv("PORT", "8084"),
 		GinMode:    getEnv("GIN_MODE", "release"),
 	}
 

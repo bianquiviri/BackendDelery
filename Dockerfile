@@ -39,5 +39,5 @@ COPY --from=builder /go/bin/api /app/api
 COPY .env.example /app/.env
 
 # Run the web service on container startup.
-EXPOSE 8080
+EXPOSE 8084
 ENTRYPOINT ["/app/api"]
