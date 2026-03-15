@@ -1,0 +1,20 @@
+# Binaries
+/api
+/tmp/api
+
+# macOS specific metadata files
+.DS_Store
+._*
+
+# Environment variables
+.env
+
+# Editor settings
+.vscode/
+
+# Build artifacts
+*.out
+*.exe
+*.o
+*.a
+*.so
