@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"os"
+
 	"github.com/backend-delery/api/database"
 	"github.com/backend-delery/api/internal/config"
 	"github.com/backend-delery/api/internal/handler"
@@ -33,6 +35,13 @@ func main() {
 	// 2.1 Run Migrations
 	if err := database.AutoMigrate(db); err != nil {
 		log.Fatalf("Fatal error during DB migration: %v", err)
+	}
+
+	// 2.2 Seed Data if requested
+	if os.Getenv("SEED") == "true" {
+		if err := database.SeedData(db); err != nil {
+			log.Printf("Warning: Seeding failed: %v", err)
+		}
 	}
 
 	// 3. Dependency Injection (DI) Setup

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -18,7 +19,7 @@ type MockOrderService struct {
 	mock.Mock
 }
 
-func (m *MockOrderService) CreateOrder(ctx interface{}, storeID uint, total float64, address string) (*models.Order, error) {
+func (m *MockOrderService) CreateOrder(ctx context.Context, storeID uint, total float64, address string) (*models.Order, error) {
 	args := m.Called(ctx, storeID, total, address)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -26,12 +27,12 @@ func (m *MockOrderService) CreateOrder(ctx interface{}, storeID uint, total floa
 	return args.Get(0).(*models.Order), args.Error(1)
 }
 
-func (m *MockOrderService) GetNearbyOrders(ctx interface{}, driverID uint, lat, lon float64) ([]models.Order, error) {
+func (m *MockOrderService) GetNearbyOrders(ctx context.Context, driverID uint, lat, lon float64) ([]*models.Order, error) {
 	args := m.Called(ctx, driverID, lat, lon)
-	return args.Get(0).([]models.Order), args.Error(1)
+	return args.Get(0).([]*models.Order), args.Error(1)
 }
 
-func (m *MockOrderService) UpdateOrderStatus(ctx interface{}, id uint, status models.OrderStatus) error {
+func (m *MockOrderService) UpdateOrderStatus(ctx context.Context, id uint, status models.OrderStatus) error {
 	args := m.Called(ctx, id, status)
 	return args.Error(0)
 }
@@ -87,7 +88,7 @@ func TestOrderHandler_GetNearbyOrders(t *testing.T) {
 		mockSvc := new(MockOrderService)
 		h := NewOrderHandler(mockSvc)
 		
-		expectedOrders := []models.Order{{ID: 1}, {ID: 2}}
+		expectedOrders := []*models.Order{{ID: 1}, {ID: 2}}
 		mockSvc.On("GetNearbyOrders", mock.Anything, uint(1), 40.0, -70.0).Return(expectedOrders, nil)
 		
 		router := gin.New()
@@ -109,12 +110,12 @@ func TestOrderHandler_UpdateOrderStatus(t *testing.T) {
 		mockSvc := new(MockOrderService)
 		h := NewOrderHandler(mockSvc)
 		
-		mockSvc.On("UpdateOrderStatus", mock.Anything, uint(1), models.StatusDelivered).Return(nil)
+		mockSvc.On("UpdateOrderStatus", mock.Anything, uint(1), models.OrderStatusDelivered).Return(nil)
 		
 		router := gin.New()
 		h.RegisterRoutes(router)
 		
-		body, _ := json.Marshal(UpdateOrderStatusRequest{Status: models.StatusDelivered})
+		body, _ := json.Marshal(UpdateOrderStatusRequest{Status: models.OrderStatusDelivered})
 		req, _ := http.NewRequest(http.MethodPatch, "/orders/1/status", bytes.NewBuffer(body))
 		w := httptest.NewRecorder()
 		router.ServeHTTP(w, req)
