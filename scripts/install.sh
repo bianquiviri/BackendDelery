@@ -5,16 +5,19 @@
 
 set -e
 
-# Asegurar que el script se ejecute desde la raíz del proyecto
-cd "$(dirname "$0")/.."
+# Get the directory where the script is located
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Project root is one level up
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-echo "🚀 Starting DaaS Backend Installation..."
+cd "$PROJECT_ROOT"
 
-# 1. Copy .env if it doesn't exist
+echo "🚀 Starting DaaS Backend Installation from $PROJECT_ROOT..."
+
+# 1. Copy .env if it doesn't exist (non-fatal if permission denied)
 if [ ! -f .env ]; then
-    echo "📝 Creating .env from .env.example..."
-    cp .env.example .env
-    echo "⚠️  Please update .env with your actual credentials if necessary."
+    echo "📝 Attempting to create .env from .env.example..."
+    cp .env.example .env 2>/dev/null || echo "⚠️ Could not copy .env (possibly already exists or permission denied). Skipping..."
 fi
 
 # 4. Pull or build the containers
