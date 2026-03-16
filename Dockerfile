@@ -20,8 +20,9 @@ RUN go mod download
 COPY . .
 
 # Build the binary.
-# -ldflags="-w -s" removes debugging info, reducing binary size (Performance).
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/api cmd/api/main.go
+# Use TARGETARCH to automatically build for the correct processor (ARM or x86).
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} go build -ldflags="-w -s" -o /go/bin/api cmd/api/main.go
 
 # Use a clean, minimal Alpine image for the final stage.
 FROM alpine:3.19
