@@ -7,19 +7,7 @@ set -e
 
 echo "🚀 Starting DaaS Backend Installation..."
 
-# 1. Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "❌ Docker is not installed. Please install it first."
-    exit 1
-fi
-
-# 2. Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
-    echo "❌ docker-compose is not installed. Please install it first."
-    exit 1
-fi
-
-# 3. Copy .env if it doesn't exist
+# 1. Copy .env if it doesn't exist
 if [ ! -f .env ]; then
     echo "📝 Creating .env from .env.example..."
     cp .env.example .env
