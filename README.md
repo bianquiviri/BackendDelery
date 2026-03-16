@@ -50,3 +50,4 @@ El sistema emplea Inyección de Dependencias (DI) para separar el transporte HTT
 *   Middleware de control de pánicos para garantizar la disponibilidad del servicio.
 *   Aseguramiento del cierre (`defer`) eficiente de descriptores de archivos, rows de SQL y cuerpos de respuesta HTTP.
 *   Prevención de Goroutine Leaks al manejar contextos a lo largo de toda la petición GORM.
+\n<!-- Sync test at Mon Mar 16 11:49:30 CET 2026 -->
