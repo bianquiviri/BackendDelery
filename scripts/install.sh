@@ -16,7 +16,7 @@ fi
 
 # 4. Pull or build the containers
 echo "🛠 Building and starting containers..."
-docker-compose up -d --build
+docker compose up -d --build
 
 # 5. Run DB setup script inside the container (optional manually or here)
 echo "📂 Setting up database..."
@@ -24,4 +24,4 @@ chmod +x scripts/setup-db.sh
 ./scripts/setup-db.sh
 
 echo "✅ Installation complete! API is running on http://localhost:8084"
-echo "🔍 Check logs with: docker-compose logs -f"
+echo "🔍 Check logs with: docker compose logs -f"

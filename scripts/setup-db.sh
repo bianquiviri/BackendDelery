@@ -14,7 +14,7 @@ echo "⏳ Waiting for database to be ready..."
 MAX_RETRIES=30
 RETRY_COUNT=0
 
-until docker-compose exec -T db pg_isready -U postgres > /dev/null 2>&1 || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
+until docker compose exec -T db pg_isready -U postgres > /dev/null 2>&1 || [ $RETRY_COUNT -eq $MAX_RETRIES ]; do
   echo "...waiting for postgres ($RETRY_COUNT/$MAX_RETRIES)..."
   sleep 2
   RETRY_COUNT=$((RETRY_COUNT+1))

@@ -35,8 +35,8 @@ jobs:
           # Copy project files to DigitalOcean Droplet
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" --exclude='.git' --exclude='.github' ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/bakenddelivery/
           
-          # Execute docker-compose rebuild on the server
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /var/www/html/bakenddelivery && docker-compose down && docker-compose up -d --build"
+          # Execute docker compose rebuild on the server
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /var/www/html/bakenddelivery && docker compose down && docker compose up -d --build"
 
       - name: Slack Notification - Success
         if: success()
