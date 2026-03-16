@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaaS Backend - API Documentation & Explorer</title>
+    <!-- Tabler UI CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler-vendors.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f6f8fb; }
+        .page-header { background: linear-gradient(135deg, #1d273b 0%, #0c121c 100%); color: white; padding: 3rem 0; margin-bottom: 2rem; }
+        .card-header { font-weight: 600; }
+        pre { background-color: #f8f9fa; padding: 1rem; border-radius: 4px; border: 1px solid #e6e7e9; max-height: 300px; overflow-y: auto; }
+        .badge-method { width: 60px; text-align: center; }
+        .response-container { margin-top: 1rem; }
+        .loading-spinner { display: none; margin-left: 0.5rem; }
+        /* Smooth transitions */
+        .card { transition: transform 0.2s, box-shadow 0.2s; border: none; border-radius: 12px; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .btn-primary { background-color: #206bc4; border-color: #206bc4; box-shadow: 0 4px 14px 0 rgba(32,107,196,0.39); }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="page-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h1 class="page-title mb-1">🚀 DaaS Backend</h1>
+                        <p class="opacity-75">Delivery as a Service - Powerful & Scalable Logistics Engine</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-body">
+            <div class="container-xl">
+                <div class="row row-cards">
+                    <!-- Project Info -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3 class="card-title">Project Overview</h3>
+                                <p>This project is a high-performance backend for a Delivery as a Service platform, built with <strong>Go (Golang)</strong>, <strong>Gin</strong>, and <strong>PostgreSQL</strong>. It handles order lifecycle, driver assignments, and location-based queries.</p>
+                                <div class="row mt-4">
+                                    <div class="col-md-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="avatar avatar-md bg-blue-lt me-3">GO</span>
+                                            <div>
+                                                <div class="font-weight-medium">Architecture</div>
+                                                <div class="text-muted">Clean & Hexagonal</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="avatar avatar-md bg-green-lt me-3">DB</span>
+                                            <div>
+                                                <div class="font-weight-medium">Persistence</div>
+                                                <div class="text-muted">GORM + PostgreSQL</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="avatar avatar-md bg-yellow-lt me-3">API</span>
+                                            <div>
+                                                <div class="font-weight-medium">Routing</div>
+                                                <div class="text-muted">Gin Framework</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="avatar avatar-md bg-red-lt me-3">🐳</span>
+                                            <div>
+                                                <div class="font-weight-medium">Infrastructure</div>
+                                                <div class="text-muted">Dockerized</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API Explorer -->
+                    <div class="col-md-6">
+                        <div class="card bg-primary-lt">
+                            <div class="card-body">
+                                <h3 class="card-title">Live API Explorer</h3>
+                                <p>Test the endpoints directly from this dashboard.</p>
+                                
+                                <div class="accordion" id="api-accordion">
+                                    <!-- Health Check -->
+                                    <div class="accordion-item mb-2 shadow-sm rounded overflow-hidden">
+                                        <div class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHealth">
+                                                <span class="badge bg-green text-green-fg badge-method me-2">GET</span>
+                                                <span class="font-weight-bold">/health</span>
+                                            </button>
+                                        </div>
+                                        <div id="collapseHealth" class="accordion-collapse collapse" data-bs-parent="#api-accordion">
+                                            <div class="accordion-body">
+                                                <p class="text-muted">Checks technical status of the API and Database connection.</p>
+                                                <button class="btn btn-primary btn-sm" onclick="callApi('/health', 'GET', null, 'health-res')">
+                                                    Execute
+                                                    <div class="spinner-border spinner-border-sm loading-spinner" id="health-res-spinner"></div>
+                                                </button>
+                                                <div class="response-container">
+                                                    <pre id="health-res">Waiting for execution...</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Create Order -->
+                                    <div class="accordion-item mb-2 shadow-sm rounded overflow-hidden">
+                                        <div class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreate">
+                                                <span class="badge bg-blue text-blue-fg badge-method me-2">POST</span>
+                                                <span class="font-weight-bold">/orders</span>
+                                            </button>
+                                        </div>
+                                        <div id="collapseCreate" class="accordion-collapse collapse" data-bs-parent="#api-accordion">
+                                            <div class="accordion-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Request Body (JSON)</label>
+                                                    <textarea class="form-control" id="create-body" rows="4">{"store_id": 1, "total": 29.99, "customer_address": "Calle Mayor 1, Madrid"}</textarea>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="callApi('/orders', 'POST', 'create-body', 'create-res')">
+                                                    Execute
+                                                    <div class="spinner-border spinner-border-sm loading-spinner" id="create-res-spinner"></div>
+                                                </button>
+                                                <div class="response-container">
+                                                    <pre id="create-res">Waiting for execution...</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Nearby Orders -->
+                                    <div class="accordion-item mb-2 shadow-sm rounded overflow-hidden">
+                                        <div class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNearby">
+                                                <span class="badge bg-green text-green-fg badge-method me-2">GET</span>
+                                                <span class="font-weight-bold">/orders/nearby</span>
+                                            </button>
+                                        </div>
+                                        <div id="collapseNearby" class="accordion-collapse collapse" data-bs-parent="#api-accordion">
+                                            <div class="accordion-body">
+                                                <div class="row g-2 mb-3">
+                                                    <div class="col-4">
+                                                        <label class="form-label">Driver ID</label>
+                                                        <input type="number" class="form-control" id="near-driver" value="1">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label class="form-label">Lat</label>
+                                                        <input type="text" class="form-control" id="near-lat" value="40.4168">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label class="form-label">Lon</label>
+                                                        <input type="text" class="form-control" id="near-lon" value="-3.7038">
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="callApiNearby()">
+                                                    Execute
+                                                    <div class="spinner-border spinner-border-sm loading-spinner" id="nearby-res-spinner"></div>
+                                                </button>
+                                                <div class="response-container">
+                                                    <pre id="nearby-res">Waiting for execution...</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Update Status -->
+                                    <div class="accordion-item mb-2 shadow-sm rounded overflow-hidden">
+                                        <div class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStatus">
+                                                <span class="badge bg-yellow text-yellow-fg badge-method me-2">PATCH</span>
+                                                <span class="font-weight-bold">/orders/:id/status</span>
+                                            </button>
+                                        </div>
+                                        <div id="collapseStatus" class="accordion-collapse collapse" data-bs-parent="#api-accordion">
+                                            <div class="accordion-body">
+                                                <div class="row g-2 mb-3">
+                                                    <div class="col-4">
+                                                        <label class="form-label">Order ID</label>
+                                                        <input type="number" class="form-control" id="status-id" value="1">
+                                                    </div>
+                                                    <div class="col-8">
+                                                        <label class="form-label">New Status</label>
+                                                        <select class="form-select" id="status-val">
+                                                            <option value="pending">pending</option>
+                                                            <option value="accepted">accepted</option>
+                                                            <option value="picked_up">picked_up</option>
+                                                            <option value="delivered">delivered</option>
+                                                            <option value="cancelled">cancelled</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-primary btn-sm" onclick="callApiUpdateStatus()">
+                                                    Execute
+                                                    <div class="spinner-border spinner-border-sm loading-spinner" id="status-res-spinner"></div>
+                                                </button>
+                                                <div class="response-container">
+                                                    <pre id="status-res">Waiting for execution...</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documentation -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Technical Documentation</h3>
+                            </div>
+                            <div class="card-body">
+                                <h5>Pre-requisites</h5>
+                                <ul>
+                                    <li>Docker & Docker Compose</li>
+                                    <li>Go 1.25+ (if running locally)</li>
+                                </ul>
+
+                                <h5 class="mt-4">Endpoints Summary</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-vcenter table-mobile-md card-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Method</th>
+                                                <th>Path</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><span class="badge bg-green text-green-fg">GET</span></td>
+                                                <td><code>/health</code></td>
+                                                <td>Pulse check.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge bg-blue text-blue-fg">POST</span></td>
+                                                <td><code>/orders</code></td>
+                                                <td>Creates a delivery.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge bg-green text-green-fg">GET</span></td>
+                                                <td><code>/orders/nearby</code></td>
+                                                <td>Find available orders.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge bg-yellow text-yellow-fg">PATCH</span></td>
+                                                <td><code>/orders/:id/status</code></td>
+                                                <td>Lifecycle update.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h5 class="mt-4">Data Models</h5>
+                                <div class="accordion" id="models-accordion">
+                                    <div class="accordion-item shadow-none border-bottom">
+                                        <div class="accordion-header">
+                                            <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#modelOrder">
+                                                Order Object
+                                            </button>
+                                        </div>
+                                        <div id="modelOrder" class="accordion-collapse collapse">
+                                            <div class="accordion-body text-muted small">
+                                                { "id": uint, "store_id": uint, "driver_id": uint, "status": string, "total": float, ... }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-muted small">
+                                Backend version: 1.0.0-beta
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer footer-transparent d-print-none py-4">
+            <div class="container-xl">
+                <div class="row text-center align-items-center flex-row-reverse">
+                    <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                        <ul class="list-inline list-inline-dots mb-0">
+                            <li class="list-inline-item">
+                                &copy; 2026 <a href="." class="link-secondary">DaaS Backend Delery</a>.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Tabler UI JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+    <script>
+        async function callApi(path, method, bodyId, resId) {
+            const resEl = document.getElementById(resId);
+            const spinner = document.getElementById(resId + '-spinner');
+            
+            resEl.innerText = "Processing...";
+            spinner.style.display = "inline-block";
+
+            try {
+                let options = { method: method };
+                if (bodyId) {
+                    options.body = document.getElementById(bodyId).value;
+                    options.headers = { 'Content-Type': 'application/json' };
+                }
+
+                const response = await fetch(path, options);
+                const data = await response.json();
+                resEl.innerText = JSON.stringify(data, null, 2);
+                resEl.className = response.ok ? "text-success" : "text-danger";
+            } catch (err) {
+                resEl.innerText = "Error: " + err.message;
+                resEl.className = "text-danger";
+            } finally {
+                spinner.style.display = "none";
+            }
+        }
+
+        function callApiNearby() {
+            const driver = document.getElementById('near-driver').value;
+            const lat = document.getElementById('near-lat').value;
+            const lon = document.getElementById('near-lon').value;
+            const path = `/orders/nearby?driver_id=${driver}&lat=${lat}&lon=${lon}`;
+            callApi(path, 'GET', null, 'nearby-res');
+        }
+
+        function callApiUpdateStatus() {
+            const id = document.getElementById('status-id').value;
+            const status = document.getElementById('status-val').value;
+            const body = JSON.stringify({ status: status });
+            
+            // Temporary hack to use the callApi helper: set a value in a hidden textarea if needed, 
+            // but let's just do it directly for simplicity.
+            const resId = 'status-res';
+            const resEl = document.getElementById(resId);
+            const spinner = document.getElementById(resId + '-spinner');
+            
+            resEl.innerText = "Processing...";
+            spinner.style.display = "inline-block";
+
+            fetch(`/orders/${id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: body
+            })
+            .then(res => res.json())
+            .then(data => {
+                resEl.innerText = JSON.stringify(data, null, 2);
+            })
+            .catch(err => {
+                resEl.innerText = "Error: " + err.message;
+            })
+            .finally(() => {
+                spinner.style.display = "none";
+            });
+        }
+    </script>
+</body>
+</html>

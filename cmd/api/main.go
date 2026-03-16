@@ -11,7 +11,26 @@ import (
 	"github.com/backend-delery/api/internal/repository"
 	"github.com/backend-delery/api/internal/service"
 	"github.com/gin-gonic/gin"
+
+	_ "github.com/backend-delery/api/docs" // Swagger docs
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+// @title           DaaS Backend API
+// @version         1.0
+// @description     Delivery as a Service Backend API documentation.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8084
+// @BasePath  /
 
 func main() {
 	// 1. Load Configuration
@@ -65,6 +84,14 @@ func main() {
 
 	// 4.2 Register Routes
 	orderHandler.RegisterRoutes(router)
+
+	// 4.3 Serve Static Files (Documentation and API Explorer)
+	router.StaticFile("/", "./public/index.html")
+	router.Static("/assets", "./public/assets")
+	router.StaticFS("/public", gin.Dir("public", false))
+
+	// 4.4 Swagger Documentation
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Simple health check endpoint
 	router.GET("/health", func(c *gin.Context) {

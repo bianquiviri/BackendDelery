@@ -34,6 +34,17 @@ type CreateOrderRequest struct {
 	CustomerAddress string  `json:"customer_address" binding:"required"`
 }
 
+// CreateOrder godoc
+// @Summary      Create a new order
+// @Description  Creates a delivery order for a specific store
+// @Tags         orders
+// @Accept       json
+// @Produce      json
+// @Param        order  body      CreateOrderRequest  true  "Order creation details"
+// @Success      201    {object}  models.Order
+// @Failure      400    {object}  map[string]string
+// @Failure      500    {object}  map[string]string
+// @Router       /orders [post]
 func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	var req CreateOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -60,6 +71,19 @@ type GetNearbyOrdersRequest struct {
 	Longitude float64 `form:"lon" binding:"required"`
 }
 
+// GetNearbyOrders godoc
+// @Summary      Get nearby orders
+// @Description  Allows a driver to find orders near their current location
+// @Tags         orders
+// @Accept       json
+// @Produce      json
+// @Param        driver_id  query     int      true  "Driver ID"
+// @Param        lat        query     float64  true  "Latitude"
+// @Param        lon        query     float64  true  "Longitude"
+// @Success      200        {object}  map[string][]models.Order
+// @Failure      400        {object}  map[string]string
+// @Failure      500        {object}  map[string]string
+// @Router       /orders/nearby [get]
 func (h *OrderHandler) GetNearbyOrders(c *gin.Context) {
 	var req GetNearbyOrdersRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
@@ -82,6 +106,18 @@ type UpdateOrderStatusRequest struct {
 }
 
 // UpdateOrderStatus handles the status transition of an order.
+// UpdateOrderStatus godoc
+// @Summary      Update order status
+// @Description  Updates the lifecycle status of an existing order
+// @Tags         orders
+// @Accept       json
+// @Produce      json
+// @Param        id      path      int                       true  "Order ID"
+// @Param        status  body      UpdateOrderStatusRequest  true  "New status"
+// @Success      200     {object}  map[string]string
+// @Failure      400     {object}  map[string]string
+// @Failure      500     {object}  map[string]string
+// @Router       /orders/{id}/status [patch]
 func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 	var req UpdateOrderStatusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

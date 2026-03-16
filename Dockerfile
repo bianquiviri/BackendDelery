@@ -19,6 +19,11 @@ RUN go mod download
 # Copy local code to the container image.
 COPY . .
 
+# Install Swagger tool and generate documentation
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init -g cmd/api/main.go
+RUN go mod tidy
+
 # Build the binary.
 # Use TARGETARCH to automatically build for the correct processor (ARM or x86).
 ARG TARGETARCH
@@ -34,8 +39,9 @@ COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 
 WORKDIR /app
 
-# Copy the binary to the production image from the builder stage.
+# Copy the binary and static files to the production image from the builder stage.
 COPY --from=builder /go/bin/api /app/api
+COPY public /app/public
 # Also copy the example env file. The actual env should be provided at runtime.
 COPY .env.example /app/.env
 
