@@ -5,6 +5,9 @@
 
 set -e
 
+# Asegurar que el script se ejecute desde la raíz del proyecto
+cd "$(dirname "$0")/.."
+
 echo "🚀 Starting DaaS Backend Installation..."
 
 # 1. Copy .env if it doesn't exist
